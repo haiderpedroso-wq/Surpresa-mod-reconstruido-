@@ -1,0 +1,39 @@
+
+name: Build Surpresa Mod Forge 1.12.2
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '4.10.3'
+
+      - name: Extrair projeto
+        run: |
+          unzip -q surpresa-mod-reconstruido.zip -d extracted
+
+      - name: Compilar mod
+        run: |
+          gradle --no-daemon -p extracted/surpresa-mod-reconstruido clean build
+
+      - name: Guardar arquivo JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: surpresa-mod-forge-1.12.2
+          path: extracted/surpresa-mod-reconstruido/build/libs/*.jar
